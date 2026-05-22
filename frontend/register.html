@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Credlify</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #080e1c; --navy-mid: #0f1829; --navy-card: #131f35;
+    --gold: #c9a84c; --gold-light: #e8c96a; --gold-dim: rgba(201,168,76,0.12);
+    --white: #f0ede6; --muted: #7a8ba8; --border: rgba(201,168,76,0.18);
+    --green: #4ade80; --green-dim: rgba(74,222,128,0.1); --green-border: rgba(74,222,128,0.25);
+    --error: #f87171;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+
+  nav { padding: 0 20px; height: 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: var(--navy); }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.2rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 28px; height: 28px; background: var(--gold); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.68rem; font-weight: 800; color: var(--navy); flex-shrink: 0; }
+  .logo span { color: var(--gold); }
+  .back-link { font-family: 'Syne', sans-serif; font-size: 0.78rem; color: var(--muted); text-decoration: none; }
+
+  .prog-bar { height: 3px; background: rgba(255,255,255,0.05); }
+  .prog-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--gold-light)); transition: width 0.4s ease; }
+
+  .main { padding: 28px 20px 60px; max-width: 560px; margin: 0 auto; }
+
+  .page-eyebrow { font-family: 'Syne', sans-serif; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 6px; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; letter-spacing: -0.8px; margin-bottom: 6px; }
+  .page-sub { font-size: 0.85rem; color: var(--muted); font-weight: 300; line-height: 1.6; margin-bottom: 24px; }
+
+  /* COURSE GRID — 2 columns on mobile */
+  .course-label { font-family: 'Syne', sans-serif; font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 12px; display: block; }
+
+  .courses-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+
+  .course-opt {
+    background: var(--navy-card); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 14px 12px; cursor: pointer;
+    transition: all 0.2s; position: relative;
+    display: flex; flex-direction: column; gap: 6px;
+  }
+  .course-opt:active { transform: scale(0.98); }
+  .course-opt.selected { border-color: var(--gold); background: var(--gold-dim); }
+
+  .co-top { display: flex; justify-content: space-between; align-items: flex-start; }
+  .co-emoji { font-size: 1.3rem; }
+  .co-check { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.55rem; color: transparent; transition: all 0.2s; flex-shrink: 0; }
+  .course-opt.selected .co-check { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+
+  .co-name { font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--white); line-height: 1.3; }
+  .co-meta { font-size: 0.62rem; color: var(--muted); font-family: 'Syne', sans-serif; }
+  .co-free { display: inline-block; background: var(--green-dim); border: 1px solid var(--green-border); color: var(--green); font-size: 0.55rem; font-weight: 700; padding: 2px 7px; border-radius: 100px; font-family: 'Syne', sans-serif; letter-spacing: 1px; margin-top: 2px; }
+
+  /* SELECTED DISPLAY */
+  .selected-display { background: var(--gold-dim); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-family: 'Syne', sans-serif; font-size: 0.82rem; color: var(--gold); font-weight: 600; margin-bottom: 20px; }
+
+  /* NOTE */
+  .note-box { background: rgba(201,168,76,0.06); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 0.78rem; color: var(--muted); line-height: 1.6; margin-bottom: 20px; font-weight: 300; }
+  .note-box strong { color: var(--gold); font-weight: 600; }
+
+  /* FORM */
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 16px; font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--white); outline: none; -webkit-appearance: none; transition: border-color 0.2s; }
+  .form-input::placeholder { color: var(--muted); }
+  .form-input:focus { border-color: var(--gold); }
+  .form-input.error { border-color: var(--error); }
+  .error-msg { font-size: 0.72rem; color: var(--error); margin-top: 5px; font-family: 'Syne', sans-serif; display: none; }
+
+  .submit-btn { width: 100%; background: var(--gold); color: var(--navy); border: none; padding: 16px; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; cursor: pointer; box-shadow: 0 8px 24px rgba(201,168,76,0.25); margin-top: 8px; transition: all 0.2s; }
+  .submit-btn:active { transform: scale(0.98); }
+
+  .login-link { text-align: center; margin-top: 18px; font-size: 0.8rem; color: var(--muted); font-family: 'Syne', sans-serif; }
+  .login-link a { color: var(--gold); text-decoration: none; font-weight: 600; }
+
+  /* SUCCESS */
+  .success-section { display: none; text-align: center; padding: 20px 0; }
+  .success-icon { width: 72px; height: 72px; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin: 0 auto 20px; }
+  .success-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+  .success-sub { font-size: 0.88rem; color: var(--muted); line-height: 1.7; margin-bottom: 28px; font-weight: 300; }
+  .prog-loading { width: 100%; background: rgba(255,255,255,0.05); border-radius: 100px; height: 4px; overflow: hidden; }
+  .prog-loading-fill { height: 100%; background: var(--gold); width: 0%; transition: width 2.2s ease; border-radius: 100px; }
+
+  @media (min-width: 600px) {
+    nav { padding: 0 40px; }
+    .main { padding: 40px 40px 80px; }
+    .page-title { font-size: 2rem; }
+    .courses-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (min-width: 900px) {
+    .courses-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-icon">C</div>Cred<span>lify</span></a>
+  <a href="index.html" class="back-link">← Back</a>
+</nav>
+<div class="prog-bar"><div class="prog-fill" style="width:33%"></div></div>
+
+<div class="main">
+  <div id="formSection">
+    <div class="page-eyebrow">Step 1 of 3</div>
+    <div class="page-title">Register & Choose Course</div>
+    <p class="page-sub">Pick your course and fill in your details. The assessment is completely free.</p>
+
+    <!-- COURSE SELECTION -->
+    <label class="course-label">Select Your Course</label>
+    <div class="courses-grid" id="courseGrid">
+
+      <div class="course-opt selected" data-course="java" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">☕</div><div class="co-check">✓</div></div>
+        <div class="co-name">Java Programming</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="cpp" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">⚙️</div><div class="co-check">✓</div></div>
+        <div class="co-name">C++ Programming</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="python" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">🐍</div><div class="co-check">✓</div></div>
+        <div class="co-name">Python Programming</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="sql" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">🗄️</div><div class="co-check">✓</div></div>
+        <div class="co-name">SQL & Databases</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="excel" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">📊</div><div class="co-check">✓</div></div>
+        <div class="co-name">Microsoft Excel</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="html" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">🌐</div><div class="co-check">✓</div></div>
+        <div class="co-name">HTML & CSS</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="digital" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">📱</div><div class="co-check">✓</div></div>
+        <div class="co-name">Digital Marketing</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="tally" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">📒</div><div class="co-check">✓</div></div>
+        <div class="co-name">Tally & Accounting</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="datascience" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">🤖</div><div class="co-check">✓</div></div>
+        <div class="co-name">Data Science Basics</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+      <div class="course-opt" data-course="basics" onclick="selectCourse(this)">
+        <div class="co-top"><div class="co-emoji">💻</div><div class="co-check">✓</div></div>
+        <div class="co-name">Computer Basics</div>
+        <div class="co-meta">15 Questions · 45 mins</div>
+        <span class="co-free">FREE</span>
+      </div>
+
+    </div>
+
+    <!-- SELECTED COURSE DISPLAY -->
+    <div class="selected-display" id="selectedCourseDisplay">☕ Selected: Java Programming</div>
+
+    <!-- IMPORTANT NOTE -->
+    <div class="note-box">
+      ⚠️ <strong>Important:</strong> Enter your full name exactly as you want it printed on your certificate. This cannot be changed later.
+    </div>
+
+    <!-- FORM FIELDS -->
+    <div class="form-group">
+      <label class="form-label">Full Name *</label>
+      <input type="text" class="form-input" id="fullName" placeholder="As you want it on the certificate" autocomplete="name">
+      <div class="error-msg" id="nameError">Please enter your full name</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email Address *</label>
+      <input type="email" class="form-input" id="email" placeholder="Certificate will be sent here" autocomplete="email">
+      <div class="error-msg" id="emailError">Enter a valid email address</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Phone Number *</label>
+      <input type="tel" class="form-input" id="phone" placeholder="10-digit mobile number" autocomplete="tel" maxlength="10" inputmode="numeric">
+      <div class="error-msg" id="phoneError">Enter a valid 10-digit phone number</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Referral Code <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-size:0.65rem">(Optional)</span></label>
+      <input type="text" class="form-input" id="referral" placeholder="Enter if someone referred you" style="text-transform:uppercase">
+    </div>
+
+    <button class="submit-btn" onclick="handleRegister()">Continue to Assessment →</button>
+    <div class="login-link">Already registered? <a href="#">Login here</a></div>
+  </div>
+
+  <!-- SUCCESS STATE -->
+  <div class="success-section" id="successSection">
+    <div class="success-icon">✓</div>
+    <div class="success-title">You're Registered!</div>
+    <p class="success-sub">Starting your assessment now. Good luck!</p>
+    <div class="prog-loading"><div class="prog-loading-fill" id="loadFill"></div></div>
+  </div>
+</div>
+
+<script>
+  let selectedCourse = 'java';
+
+  const courseNames = {
+    java: 'Java Programming',
+    cpp: 'C++ Programming',
+    python: 'Python Programming',
+    sql: 'SQL & Databases',
+    excel: 'Microsoft Excel',
+    html: 'HTML & CSS',
+    digital: 'Digital Marketing',
+    tally: 'Tally & Accounting',
+    datascience: 'Data Science Basics',
+    basics: 'Computer Basics'
+  };
+
+  const courseIcons = {
+    java:'☕', cpp:'⚙️', python:'🐍', sql:'🗄️', excel:'📊',
+    html:'🌐', digital:'📱', tally:'📒', datascience:'🤖', basics:'💻'
+  };
+
+  // Pre-select from URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const courseParam = urlParams.get('course');
+  if (courseParam && courseNames[courseParam]) {
+    document.querySelectorAll('.course-opt').forEach(o => {
+      o.classList.remove('selected');
+      if (o.dataset.course === courseParam) {
+        o.classList.add('selected');
+        selectedCourse = courseParam;
+      }
+    });
+    updateDisplay();
+  }
+
+  function selectCourse(el) {
+    document.querySelectorAll('.course-opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedCourse = el.dataset.course;
+    updateDisplay();
+  }
+
+  function updateDisplay() {
+    const icon = courseIcons[selectedCourse] || '📚';
+    const name = courseNames[selectedCourse] || selectedCourse;
+    document.getElementById('selectedCourseDisplay').textContent = icon + ' Selected: ' + name;
+  }
+
+  function handleRegister() {
+    let valid = true;
+    const name  = document.getElementById('fullName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+
+    // Reset errors
+    document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+    document.querySelectorAll('.form-input').forEach(i => i.classList.remove('error'));
+
+    if (!name || name.length < 2) {
+      document.getElementById('nameError').style.display = 'block';
+      document.getElementById('fullName').classList.add('error');
+      valid = false;
+    }
+    if (!email || !email.includes('@') || !email.includes('.')) {
+      document.getElementById('emailError').style.display = 'block';
+      document.getElementById('email').classList.add('error');
+      valid = false;
+    }
+    if (!phone || phone.length < 10) {
+      document.getElementById('phoneError').style.display = 'block';
+      document.getElementById('phone').classList.add('error');
+      valid = false;
+    }
+
+    if (!valid) return;
+
+    // Save to sessionStorage
+    sessionStorage.setItem('student', JSON.stringify({
+      name, email, phone,
+      course: selectedCourse,
+      courseName: courseNames[selectedCourse],
+      referral: document.getElementById('referral').value.trim().toUpperCase()
+    }));
+
+    // Show success and redirect
+    document.getElementById('formSection').style.display = 'none';
+    document.getElementById('successSection').style.display = 'block';
+    setTimeout(() => { document.getElementById('loadFill').style.width = '100%'; }, 100);
+    setTimeout(() => { window.location.href = 'test.html'; }, 2400);
+  }
+</script>
+</body>
+</html>

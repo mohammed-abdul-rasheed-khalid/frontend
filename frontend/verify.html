@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Certificate — Credlify</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #080e1c; --navy-mid: #0f1829; --navy-card: #131f35;
+    --gold: #c9a84c; --gold-light: #e8c96a; --gold-dim: rgba(201,168,76,0.12);
+    --white: #f0ede6; --muted: #7a8ba8; --border: rgba(201,168,76,0.18);
+    --green: #4ade80; --green-dim: rgba(74,222,128,0.1); --green-border: rgba(74,222,128,0.25);
+    --red: #f87171; --red-dim: rgba(248,113,113,0.08);
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--navy); color: var(--white); min-height: 100vh; -webkit-tap-highlight-color: transparent; }
+
+  nav { padding: 0 20px; height: 58px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.15rem; color: var(--white); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo-icon { width: 26px; height: 26px; background: var(--gold); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; color: var(--navy); }
+  .logo span { color: var(--gold); }
+  .nav-cta { font-family: 'Syne', sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--navy); background: var(--gold); text-decoration: none; padding: 7px 14px; border-radius: 8px; }
+
+  .main { padding: 32px 20px 60px; max-width: 560px; margin: 0 auto; }
+
+  .page-eyebrow { font-family: 'Syne', sans-serif; font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 8px; text-align: center; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -1px; text-align: center; margin-bottom: 8px; }
+  .page-sub { text-align: center; font-size: 0.85rem; color: var(--muted); line-height: 1.7; font-weight: 300; margin-bottom: 32px; }
+
+  /* SEARCH */
+  .search-box { background: var(--navy-card); border: 1px solid var(--border); border-radius: 18px; padding: 24px 20px; margin-bottom: 24px; }
+  .search-label { font-family: 'Syne', sans-serif; font-size: 0.68rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 10px; display: block; }
+  .search-row { display: flex; gap: 10px; margin-bottom: 10px; }
+  .cred-input { flex: 1; min-width: 0; background: rgba(255,255,255,0.04); border: 1.5px solid var(--border); border-radius: 12px; padding: 14px 14px; font-family: 'DM Mono', monospace; font-size: 0.85rem; color: var(--white); outline: none; -webkit-appearance: none; letter-spacing: 1px; }
+  .cred-input::placeholder { color: var(--muted); font-size: 0.75rem; letter-spacing: 0; }
+  .cred-input:focus { border-color: var(--gold); }
+  .search-btn { background: var(--gold); color: var(--navy); border: none; padding: 14px 18px; border-radius: 12px; font-family: 'Syne', sans-serif; font-size: 0.88rem; font-weight: 800; cursor: pointer; flex-shrink: 0; transition: all 0.2s; }
+  .search-btn:active { transform: scale(0.97); }
+  .format-note { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--muted); }
+
+  /* DEMO IDS */
+  .demo-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+  .demo-label { font-family: 'Syne', sans-serif; font-size: 0.65rem; color: var(--muted); }
+  .demo-id { font-family: 'DM Mono', monospace; font-size: 0.65rem; color: var(--gold); background: var(--gold-dim); border: 1px solid var(--border); padding: 5px 10px; border-radius: 6px; cursor: pointer; transition: all 0.2s; }
+  .demo-id:active { background: rgba(201,168,76,0.25); }
+
+  /* LOADING */
+  .loading-state { display: none; text-align: center; padding: 32px; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto 12px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-family: 'Syne', sans-serif; font-size: 0.78rem; color: var(--muted); }
+
+  /* RESULT CARD */
+  .result-card { display: none; background: var(--navy-card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-bottom: 24px; }
+  .rc-header { background: linear-gradient(135deg, #0d1a38, #1a2f5a); padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+  .rc-brand { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem; color: var(--white); }
+  .rc-brand span { color: var(--gold); }
+  .valid-badge { display: flex; align-items: center; gap: 6px; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 100px; padding: 5px 14px; font-family: 'Syne', sans-serif; font-size: 0.68rem; font-weight: 700; color: var(--green); letter-spacing: 1px; }
+  .rc-body { padding: 22px 20px; }
+  .rc-name { font-family: 'Syne', sans-serif; font-size: 1.4rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .rc-course { font-size: 0.82rem; color: var(--gold); font-family: 'Syne', sans-serif; font-weight: 600; margin-bottom: 22px; }
+  .rc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .rc-field { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+  .rcf-label { font-family: 'Syne', sans-serif; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+  .rcf-val { font-family: 'Syne', sans-serif; font-size: 0.92rem; font-weight: 700; color: var(--white); }
+  .rcf-val.gold { color: var(--gold); }
+  .rcf-val.green { color: var(--green); }
+  .rc-cred { background: var(--gold-dim); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+  .rc-cred-label { font-family: 'Syne', sans-serif; font-size: 0.6rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .rc-cred-val { font-family: 'DM Mono', monospace; font-size: 0.82rem; color: var(--gold); font-weight: 500; letter-spacing: 1.5px; }
+  .rc-issuer { text-align: right; font-family: 'Syne', sans-serif; font-size: 0.65rem; color: var(--muted); }
+  .rc-issuer span { color: var(--gold); font-weight: 600; display: block; }
+
+  /* NOT FOUND */
+  .not-found { display: none; text-align: center; padding: 36px 24px; background: var(--red-dim); border: 1px solid rgba(248,113,113,0.2); border-radius: 18px; margin-bottom: 24px; }
+  .nf-icon { font-size: 2.2rem; margin-bottom: 12px; }
+  .nf-title { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--red); margin-bottom: 8px; }
+  .nf-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+
+  /* INFO GRID */
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .info-card { background: var(--navy-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 14px; text-align: center; }
+  .ic-icon { font-size: 1.4rem; margin-bottom: 8px; }
+  .ic-title { font-family: 'Syne', sans-serif; font-size: 0.82rem; font-weight: 700; margin-bottom: 5px; }
+  .ic-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+  @media (min-width: 600px) {
+    nav { padding: 0 40px; height: 64px; }
+    .main { padding: 48px 40px 80px; }
+    .page-title { font-size: 2.2rem; }
+    .search-box { padding: 32px; }
+    .rc-body { padding: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo"><div class="logo-icon">C</div>Cred<span>lify</span></a>
+  <a href="register.html" class="nav-cta">Get Certified →</a>
+</nav>
+
+<div class="main">
+  <div class="page-eyebrow">For Recruiters & Employers</div>
+  <div class="page-title">Verify Certificate</div>
+  <p class="page-sub">Enter the Credential ID from the certificate to instantly verify its authenticity and details.</p>
+
+  <!-- SEARCH BOX -->
+  <div class="search-box">
+    <label class="search-label">Enter Credential ID</label>
+    <div class="search-row">
+      <input type="text" class="cred-input" id="credInput" placeholder="CL-2025-JV-04821" onkeydown="if(event.key==='Enter') verify()" autocomplete="off" autocapitalize="characters">
+      <button class="search-btn" onclick="verify()">Verify</button>
+    </div>
+    <div class="format-note">Format: CL-YEAR-COURSE-NUMBER</div>
+    <div class="demo-row">
+      <span class="demo-label">Try demo:</span>
+      <span class="demo-id" onclick="tryDemo('CL-2025-JV-04821')">CL-2025-JV-04821</span>
+      <span class="demo-id" onclick="tryDemo('CL-2025-CP-03142')">CL-2025-CP-03142</span>
+      <span class="demo-id" onclick="tryDemo('CL-2025-EX-07731')">CL-2025-EX-07731</span>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loadingState">
+    <div class="spinner"></div>
+    <div class="loading-text">Checking database...</div>
+  </div>
+
+  <!-- RESULT CARD -->
+  <div class="result-card" id="resultCard">
+    <div class="rc-header">
+      <div class="rc-brand">Cred<span>lify</span></div>
+      <div class="valid-badge">✓ VERIFIED VALID</div>
+    </div>
+    <div class="rc-body">
+      <div class="rc-name" id="rcName">Arjun Sharma</div>
+      <div class="rc-course" id="rcCourse">☕ Java Programming</div>
+      <div class="rc-grid">
+        <div class="rc-field"><div class="rcf-label">Score</div><div class="rcf-val gold" id="rcScore">87 / 100</div></div>
+        <div class="rc-field"><div class="rcf-label">Grade</div><div class="rcf-val gold" id="rcGrade">A</div></div>
+        <div class="rc-field"><div class="rcf-label">Issue Date</div><div class="rcf-val" id="rcDate">12 May 2025</div></div>
+        <div class="rc-field"><div class="rcf-label">Status</div><div class="rcf-val green" id="rcStatus">✅ Valid</div></div>
+      </div>
+      <div class="rc-cred">
+        <div>
+          <div class="rc-cred-label">Credential ID</div>
+          <div class="rc-cred-val" id="rcCredId">CL-2025-JV-04821</div>
+        </div>
+        <div class="rc-issuer">Issued by<span>Credlify</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOT FOUND -->
+  <div class="not-found" id="notFound">
+    <div class="nf-icon">🔍</div>
+    <div class="nf-title">Certificate Not Found</div>
+    <p class="nf-desc">No certificate found with this ID. Please double-check and try again. Contact <span style="color:var(--gold)">support@credlify.in</span> if you need help.</p>
+  </div>
+
+  <!-- INFO GRID -->
+  <div class="info-grid">
+    <div class="info-card"><div class="ic-icon">🔒</div><div class="ic-title">Tamper Proof</div><p class="ic-desc">Stored securely in our database. Cannot be faked.</p></div>
+    <div class="info-card"><div class="ic-icon">⚡</div><div class="ic-title">Instant</div><p class="ic-desc">Verification in under 2 seconds. No login needed.</p></div>
+    <div class="info-card"><div class="ic-icon">📊</div><div class="ic-title">Full Report</div><p class="ic-desc">See exact score, grade, course and issue date.</p></div>
+    <div class="info-card"><div class="ic-icon">♾️</div><div class="ic-title">Permanent</div><p class="ic-desc">Credlify certificates remain verifiable forever.</p></div>
+  </div>
+</div>
+
+<script>
+  // Demo data — production fetches from your Railway backend API
+  const DEMO = {
+    'CL-2025-JV-04821': { name:'Arjun Sharma', course:'☕ Java Programming', score:'87 / 100', grade:'A', date:'12 May 2025', status:'✅ Valid & Active' },
+    'CL-2025-CP-03142': { name:'Priya Reddy', course:'⚙️ C++ Programming', score:'79 / 100', grade:'B+', date:'10 May 2025', status:'✅ Valid & Active' },
+    'CL-2025-EX-07731': { name:'Rahul Mehta', course:'📊 Microsoft Excel', score:'92 / 100', grade:'A+', date:'08 May 2025', status:'✅ Valid & Active' }
+  };
+
+  function tryDemo(id) {
+    document.getElementById('credInput').value = id;
+    verify();
+  }
+
+  function verify() {
+    const input = document.getElementById('credInput').value.trim().toUpperCase();
+    if (!input) return;
+
+    document.getElementById('resultCard').style.display = 'none';
+    document.getElementById('notFound').style.display = 'none';
+    document.getElementById('loadingState').style.display = 'block';
+
+    setTimeout(() => {
+  document.getElementById('loadingState').style.display = 'none';
+
+  fetch(`https://backend-production-3822.up.railway.app/api/verify/${input}`)
+    .then(r => r.json())
+    .then(data => data.found ? showResult(data.certificate, input) : showNotFound())
+    .catch(() => showNotFound());
+
+}, 1200);
+  }
+
+  function showResult(cert, credId) {
+    document.getElementById('rcName').textContent = cert.name;
+    document.getElementById('rcCourse').textContent = cert.course;
+    document.getElementById('rcScore').textContent = cert.score;
+    document.getElementById('rcGrade').textContent = cert.grade;
+    document.getElementById('rcDate').textContent = cert.date;
+    document.getElementById('rcStatus').textContent = cert.status;
+    document.getElementById('rcCredId').textContent = credId;
+    document.getElementById('resultCard').style.display = 'block';
+    document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+</script>
+</body>
+</html>
